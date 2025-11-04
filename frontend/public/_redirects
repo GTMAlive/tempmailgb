@@ -1,2 +1,2 @@
 # Redirect .pages.dev to custom domain
-https://tempmailgb.pages.dev/* https://ainewmail.online/:splat 301!
+https://tempmailgb.pages.dev/* https://tempmailgb.com/:splat 301!
