@@ -1,0 +1,11 @@
+# robots.txt for TempMail
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /dashboard/
+
+# Sitemap location
+Sitemap: https://tempmailgb.com/sitemap.xml
+
+# Crawl-delay for polite crawlers
+Crawl-delay: 1

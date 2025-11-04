@@ -2,7 +2,50 @@
   publish = "dist"
   command = "npm run build"
 
+# Prerendering for better SEO
+[build.environment]
+  NODE_VERSION = "18"
+
+# Headers for better SEO and performance
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# SPA fallback with prerendering hint
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+  force = false
+
+# Redirect www to non-www for SEO
+[[redirects]]
+  from = "https://www.tempmailgb.com/*"
+  to = "https://tempmailgb.com/:splat"
+  status = 301
+  force = true
