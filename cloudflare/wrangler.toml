@@ -7,7 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "tempmail-db"
-database_id = "YOUR_DATABASE_ID_HERE"  # Replace after creating D1 database
+database_id = "acd42c62-3399-415b-9f76-62322a64e045"
 
 # Environment variables (optional)
 [vars]

@@ -1,0 +1,10 @@
+WORKER API URL:
+https://tempmail-worker.goutamboronew.workers.dev/api
+
+Add this as VITE_API_URL environment variable in Cloudflare Pages:
+1. Cloudflare Pages → tempmailgb project
+2. Settings → Environment variables
+3. Add: VITE_API_URL = https://tempmail-worker.goutamboronew.workers.dev/api
+4. Save and redeploy
+
+Your TempMail backend is now LIVE! 🚀
