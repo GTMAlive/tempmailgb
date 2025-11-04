@@ -17,6 +17,13 @@ function App() {
   const [viewMode, setViewMode] = useState('html'); // 'html' or 'plain'
   const [countdown, setCountdown] = useState(5); // Auto-refresh countdown
   const [devMode, setDevMode] = useState(false); // Developer mode toggle
+  const [networkLogs, setNetworkLogs] = useState([]);
+  const [performanceMetrics, setPerformanceMetrics] = useState({
+    memoryUsage: 0,
+    apiResponseTime: 0,
+    lastFetchTime: 0,
+    requestCount: 0
+  });
 
   // Auto-generate email on page load
   useEffect(() => {
@@ -51,6 +58,29 @@ function App() {
     }
   }, [currentEmail]);
 
+  // Network logging helper
+  const logNetwork = (method, endpoint, status, duration) => {
+    const log = {
+      id: Date.now(),
+      timestamp: new Date().toISOString(),
+      method,
+      endpoint,
+      status,
+      duration: `${duration}ms`,
+      time: new Date().toLocaleTimeString()
+    };
+    setNetworkLogs(prev => [log, ...prev].slice(0, 50)); // Keep last 50 logs
+    
+    // Update performance metrics
+    setPerformanceMetrics(prev => ({
+      ...prev,
+      apiResponseTime: duration,
+      lastFetchTime: Date.now(),
+      requestCount: prev.requestCount + 1,
+      memoryUsage: performance.memory ? Math.round(performance.memory.usedJSHeapSize / 1048576) : 0
+    }));
+  };
+
   const generateEmail = async () => {
     setLoading(true);
     try {
@@ -63,8 +93,12 @@ function App() {
         setInbox([]);
         setSelectedEmail(null);
         setShowLanding(false);
+        logNetwork('POST', '/generate', 200, 45);
       } else {
+        const startTime = performance.now();
         const response = await axios.post(`${API_URL}/generate`);
+        const duration = Math.round(performance.now() - startTime);
+        logNetwork('POST', '/generate', response.status, duration);
         setCurrentEmail(response.data.email);
         setExpiresAt(Date.now() + response.data.expiresIn);
         setInbox([]);
@@ -83,9 +117,13 @@ function App() {
     try {
       if (DEMO_MODE) {
         // Demo mode: Inbox is managed client-side
+        logNetwork('GET', `/inbox/${currentEmail}`, 200, 32);
         return;
       } else {
+        const startTime = performance.now();
         const response = await axios.get(`${API_URL}/inbox/${currentEmail}`);
+        const duration = Math.round(performance.now() - startTime);
+        logNetwork('GET', `/inbox/${currentEmail}`, response.status, duration);
         const newEmails = response.data.emails;
         setInbox(newEmails);
         
@@ -99,6 +137,7 @@ function App() {
       }
     } catch (error) {
       console.error('Error fetching inbox:', error);
+      logNetwork('GET', `/inbox/${currentEmail}`, 'ERROR', 0);
     }
   };
 
@@ -476,6 +515,87 @@ function App() {
                 </div>
               </div>
             )}
+
+            {/* Developer Tools Panel */}
+            <div className="mt-6">
+              <div className="bg-gray-800 rounded-t-lg border border-gray-700 p-3">
+                <p className="text-green-400 text-sm font-bold">$ tail -f devtools.log</p>
+              </div>
+              <div className="bg-black rounded-b-lg border border-t-0 border-gray-700 p-4">
+                {/* Performance Metrics */}
+                <div className="mb-6">
+                  <h3 className="text-cyan-400 text-sm font-bold mb-3">⚡ PERFORMANCE METRICS</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="bg-gray-900 border border-gray-700 rounded p-3">
+                      <p className="text-gray-500 text-xs mb-1">MEMORY</p>
+                      <p className="text-green-400 font-bold">{performanceMetrics.memoryUsage} MB</p>
+                    </div>
+                    <div className="bg-gray-900 border border-gray-700 rounded p-3">
+                      <p className="text-gray-500 text-xs mb-1">API_RESPONSE</p>
+                      <p className="text-yellow-400 font-bold">{performanceMetrics.apiResponseTime}ms</p>
+                    </div>
+                    <div className="bg-gray-900 border border-gray-700 rounded p-3">
+                      <p className="text-gray-500 text-xs mb-1">REQUESTS</p>
+                      <p className="text-cyan-400 font-bold">{performanceMetrics.requestCount}</p>
+                    </div>
+                    <div className="bg-gray-900 border border-gray-700 rounded p-3">
+                      <p className="text-gray-500 text-xs mb-1">CONNECTION</p>
+                      <p className="text-green-400 font-bold flex items-center">
+                        <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+                        ACTIVE
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Network Logs */}
+                <div>
+                  <h3 className="text-cyan-400 text-sm font-bold mb-3">📡 NETWORK LOGS</h3>
+                  <div className="bg-gray-900 border border-gray-700 rounded p-3 max-h-[300px] overflow-y-auto">
+                    {networkLogs.length === 0 ? (
+                      <p className="text-gray-600 text-xs font-mono">// No network activity yet</p>
+                    ) : (
+                      <div className="space-y-1">
+                        {networkLogs.map((log) => (
+                          <div key={log.id} className="text-xs font-mono flex items-start space-x-2 py-1 border-b border-gray-800 last:border-0">
+                            <span className="text-gray-500">[{log.time}]</span>
+                            <span className={`font-bold ${
+                              log.method === 'GET' ? 'text-blue-400' : 
+                              log.method === 'POST' ? 'text-green-400' : 
+                              log.method === 'DELETE' ? 'text-red-400' : 'text-yellow-400'
+                            }`}>
+                              {log.method}
+                            </span>
+                            <span className="text-purple-400 flex-1 truncate">{log.endpoint}</span>
+                            <span className={`${
+                              log.status === 200 ? 'text-green-400' :
+                              log.status === 'ERROR' ? 'text-red-400' : 'text-yellow-400'
+                            }`}>
+                              {log.status}
+                            </span>
+                            <span className="text-cyan-400">{log.duration}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* WebSocket Status */}
+                <div className="mt-4 bg-gray-900 border border-gray-700 rounded p-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-gray-500 text-xs">WebSocket:</span>
+                      <span className="text-gray-400 text-xs font-mono">ws://tempmail.local:8080</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="inline-block w-2 h-2 bg-yellow-500 rounded-full"></span>
+                      <span className="text-yellow-400 text-xs">POLLING</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </main>
       ) : (
