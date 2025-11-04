@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Copy, RefreshCw, Trash2, Clock, Check, Inbox, Shield, Zap, Download, ExternalLink, ChevronRight, HelpCircle, Lock, UserCheck, AlertCircle, CheckCircle, User, LogIn, LogOut, Crown, Star, Settings, BarChart3, TrendingUp, Package } from 'lucide-react';
 import axios from 'axios';
 
@@ -7,6 +8,7 @@ const API_URL = import.meta.env.VITE_API_URL || null;
 const DEMO_MODE = !API_URL; // If no API URL, use demo mode
 
 function App() {
+  const navigate = useNavigate();
   const [showLanding, setShowLanding] = useState(true);
   const [currentEmail, setCurrentEmail] = useState('');
   const [inbox, setInbox] = useState([]);
@@ -39,7 +41,15 @@ function App() {
   const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
-  const [showDashboard, setShowDashboard] = useState(false);
+
+  // Check if user is authenticated on page load
+  useEffect(() => {
+    const userData = localStorage.getItem('premiumUser');
+    if (userData) {
+      setUser(JSON.parse(userData));
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   // Auto-generate email on page load
   useEffect(() => {
@@ -346,7 +356,7 @@ function App() {
   // Authentication handlers
   const handleLogin = (email, password) => {
     // Demo authentication - In production, call API
-    setUser({
+    const userData = {
       email: email,
       name: email.split('@')[0],
       plan: 'Premium',
@@ -356,10 +366,17 @@ function App() {
       emailsStored: 89,
       storage: '2.4 GB',
       customDomains: 3
-    });
+    };
+    
+    // Save to localStorage
+    localStorage.setItem('premiumUser', JSON.stringify(userData));
+    
+    setUser(userData);
     setIsAuthenticated(true);
     setShowAuth(false);
-    setShowDashboard(true);
+    
+    // Navigate to dashboard
+    navigate('/dashboard');
   };
 
   const handleSignup = (name, email, password) => {
@@ -368,9 +385,9 @@ function App() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('premiumUser');
     setIsAuthenticated(false);
     setUser(null);
-    setShowDashboard(false);
   };
 
   return (
@@ -417,7 +434,7 @@ function App() {
               ) : (
                 <div className="relative">
                   <button
-                    onClick={() => setShowDashboard(!showDashboard)}
+                    onClick={() => navigate('/dashboard')}
                     className="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 border border-purple-200 rounded-lg transition-all"
                   >
                     <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full" />
@@ -1762,174 +1779,6 @@ ${selectedEmail.html_body || selectedEmail.body}`}
                     {authMode === 'login' ? 'Sign Up' : 'Sign In'}
                   </span>
                 </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Premium Dashboard */}
-      {showDashboard && isAuthenticated && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-y-auto"
-             onClick={() => setShowDashboard(false)}>
-          <div className="min-h-screen flex items-start justify-center pt-10 pb-20 px-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl"
-                 onClick={(e) => e.stopPropagation()}>
-              {/* Dashboard Header */}
-              <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-t-2xl px-8 py-6 text-white">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <img src={user.avatar} alt={user.name} className="w-16 h-16 rounded-full border-4 border-white/30" />
-                    <div>
-                      <h2 className="text-2xl font-bold">{user.name}</h2>
-                      <p className="text-purple-100 flex items-center space-x-2">
-                        <Crown className="w-4 h-4" />
-                        <span>{user.plan} Member</span>
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-all flex items-center space-x-2"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Dashboard Stats */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-8 border-b border-gray-200">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <Mail className="w-8 h-8 text-blue-600" />
-                    <Star className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <p className="text-3xl font-bold text-blue-900">{user.emailsReceived}</p>
-                  <p className="text-sm text-blue-700 font-medium">Emails Received</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <Package className="w-8 h-8 text-green-600" />
-                    <TrendingUp className="w-5 h-5 text-green-600" />
-                  </div>
-                  <p className="text-3xl font-bold text-green-900">{user.emailsStored}</p>
-                  <p className="text-sm text-green-700 font-medium">Emails Stored</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <BarChart3 className="w-8 h-8 text-purple-600" />
-                    <Crown className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <p className="text-3xl font-bold text-purple-900">{user.storage}</p>
-                  <p className="text-sm text-purple-700 font-medium">Storage Used</p>
-                </div>
-
-                <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-6 border border-pink-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <Shield className="w-8 h-8 text-pink-600" />
-                    <CheckCircle className="w-5 h-5 text-pink-600" />
-                  </div>
-                  <p className="text-3xl font-bold text-pink-900">{user.customDomains}</p>
-                  <p className="text-sm text-pink-700 font-medium">Custom Domains</p>
-                </div>
-              </div>
-
-              {/* Dashboard Content */}
-              <div className="p-8">
-                <h3 className="text-xl font-bold text-gray-900 mb-6">Premium Features</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Feature Cards */}
-                  <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-purple-300 transition-all">
-                    <div className="flex items-start space-x-4">
-                      <div className="p-3 bg-purple-100 rounded-lg">
-                        <Clock className="w-6 h-6 text-purple-600" />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 mb-2">Extended Storage</h4>
-                        <p className="text-sm text-gray-600">Keep emails for 30 days instead of 1 hour</p>
-                        <div className="mt-3 flex items-center space-x-2">
-                          <div className="flex-1 bg-gray-200 rounded-full h-2">
-                            <div className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full" style={{width: '65%'}}></div>
-                          </div>
-                          <span className="text-xs font-medium text-gray-600">65%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-300 transition-all">
-                    <div className="flex items-start space-x-4">
-                      <div className="p-3 bg-blue-100 rounded-lg">
-                        <Shield className="w-6 h-6 text-blue-600" />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 mb-2">Custom Domains</h4>
-                        <p className="text-sm text-gray-600">Use your own domain for temporary emails</p>
-                        <div className="mt-3 space-y-1">
-                          <p className="text-xs text-gray-500">• mail.yourdomain.com</p>
-                          <p className="text-xs text-gray-500">• temp.company.io</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-green-300 transition-all">
-                    <div className="flex items-start space-x-4">
-                      <div className="p-3 bg-green-100 rounded-lg">
-                        <Zap className="w-6 h-6 text-green-600" />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 mb-2">API Access</h4>
-                        <p className="text-sm text-gray-600">Unlimited API requests with webhooks</p>
-                        <div className="mt-3">
-                          <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono text-gray-700">
-                            {apiKey.substring(0, 20)}...
-                          </code>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-pink-300 transition-all">
-                    <div className="flex items-start space-x-4">
-                      <div className="p-3 bg-pink-100 rounded-lg">
-                        <Settings className="w-6 h-6 text-pink-600" />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-gray-900 mb-2">Advanced Features</h4>
-                        <p className="text-sm text-gray-600">Email forwarding, filters, and automation</p>
-                        <div className="mt-3 flex items-center space-x-2">
-                          <CheckCircle className="w-4 h-4 text-green-500" />
-                          <span className="text-xs text-gray-600">All features unlocked</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Account Info */}
-                <div className="mt-8 pt-8 border-t border-gray-200">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Account Information</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                      <User className="w-5 h-5 text-gray-600" />
-                      <div>
-                        <p className="text-xs text-gray-500">Email</p>
-                        <p className="font-medium text-gray-900">{user.email}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
-                      <Clock className="w-5 h-5 text-gray-600" />
-                      <div>
-                        <p className="text-xs text-gray-500">Member Since</p>
-                        <p className="font-medium text-gray-900">{user.joined}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

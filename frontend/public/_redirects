@@ -1,2 +1,5 @@
+# SPA routing - send all routes to index.html for client-side routing
+/* /index.html 200
+
 # Redirect .pages.dev to custom domain
 https://tempmailgb.pages.dev/* https://tempmailgb.com/:splat 301!

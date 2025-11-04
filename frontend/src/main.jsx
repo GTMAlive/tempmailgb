@@ -1,15 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
 import NoteMail from './NoteMail';
+import Dashboard from './Dashboard';
 import './index.css';
-
-// Simple routing based on pathname
-const path = window.location.pathname;
-const AppComponent = path === '/notemail' || path.startsWith('/notemail/') ? NoteMail : App;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AppComponent />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/notemail" element={<NoteMail />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
