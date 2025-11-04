@@ -1,0 +1,13 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Green rounded square background -->
+  <rect width="64" height="64" rx="12" fill="#16a34a"/>
+  
+  <!-- Mail envelope icon -->
+  <path d="M14 20C14 18.8954 14.8954 18 16 18H48C49.1046 18 50 18.8954 50 20V44C50 45.1046 49.1046 46 48 46H16C14.8954 46 14 45.1046 14 44V20Z" fill="white"/>
+  
+  <!-- Envelope flap -->
+  <path d="M14 20L32 32L50 20" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Envelope bottom detail -->
+  <path d="M14 44L24 34M50 44L40 34" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
