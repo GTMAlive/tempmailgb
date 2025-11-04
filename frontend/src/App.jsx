@@ -1084,7 +1084,7 @@ ${selectedEmail.html_body || selectedEmail.body}`}
                       type="text"
                       value={currentEmail}
                       readOnly
-                      className="flex-1 bg-transparent text-sm font-mono outline-none text-gray-900 selection:bg-green-100"
+                      className="flex-1 bg-transparent text-sm font-mono font-semibold outline-none text-gray-900 selection:bg-green-100"
                     />
                     <button
                       onClick={copyToClipboard}
