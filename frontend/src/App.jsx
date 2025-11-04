@@ -214,169 +214,157 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      {/* Header - Shopify Style */}
+      <header className="bg-white/80 backdrop-blur-lg border-b border-gray-200/60 sticky top-0 z-50">
+        <div className="max-w-[1400px] mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="bg-green-600 p-2.5 rounded-lg">
-                <Mail className="w-6 h-6 text-white" />
+              <div className="bg-gradient-to-br from-green-600 to-green-700 p-2 rounded-xl shadow-sm">
+                <Mail className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">TempMail</h1>
-                <p className="text-xs text-gray-500">Temporary Email Service</p>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">TempMail</h1>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
               {DEMO_MODE && (
-                <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-yellow-100 border border-yellow-300 rounded-lg text-sm">
-                  <AlertCircle className="w-4 h-4 text-yellow-600" />
-                  <span className="font-medium text-yellow-700">Demo Mode</span>
+                <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-lg text-sm">
+                  <AlertCircle className="w-4 h-4 text-amber-600" />
+                  <span className="font-medium text-amber-700">Demo Mode</span>
                 </div>
               )}
-              <button
-                onClick={() => window.location.href = '/notemail'}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all shadow-sm"
+              <a
+                href="/notemail"
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg transition-all text-sm"
               >
                 <ExternalLink className="w-4 h-4" />
                 <span className="hidden sm:inline">NoteMail</span>
-              </button>
-              <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="font-medium">Service Active</span>
-              </div>
+              </a>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <main className="max-w-[1400px] mx-auto px-6 py-8">
         
-        {/* Email Generator - Always Show */}
-        <div className="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-8 mb-8 border border-gray-200">
+        {/* Email Generator - Shopify Style */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200/60 p-8 mb-6">
           {loading && !currentEmail ? (
             <div className="text-center py-12">
               <RefreshCw className="w-12 h-12 text-green-600 animate-spin mx-auto mb-4" />
               <p className="text-gray-600 font-medium">Generating your temporary email...</p>
             </div>
           ) : currentEmail ? (
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-3">Your Temporary Email Address</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Your temporary email address</label>
                 <div className="relative">
-                  <div className="flex items-center space-x-2 bg-gray-50 border-2 border-gray-300 p-4 rounded-lg focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-200 transition-all shadow-[inset_0_1px_3px_rgba(0,0,0,0.08)]">
+                  <div className="flex items-center space-x-3 bg-gray-50/50 border border-gray-300 hover:border-gray-400 p-3.5 rounded-xl focus-within:border-green-600 focus-within:ring-4 focus-within:ring-green-100 transition-all group">
                     <Mail className="w-5 h-5 text-gray-400 flex-shrink-0" />
                     <input
                       type="text"
                       value={currentEmail}
                       readOnly
-                      className="flex-1 bg-transparent text-base font-mono outline-none text-gray-900 font-medium"
+                      className="flex-1 bg-transparent text-sm font-mono outline-none text-gray-900 selection:bg-green-100"
                     />
                     <button
                       onClick={copyToClipboard}
-                      className="flex-shrink-0 p-2.5 bg-green-600 hover:bg-green-700 rounded-lg transition-all shadow-sm"
+                      className="flex-shrink-0 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded-lg transition-all text-sm font-medium flex items-center space-x-2"
                       title="Copy to clipboard"
                     >
                       {copied ? (
-                        <Check className="w-5 h-5 text-white" />
+                        <><Check className="w-4 h-4" /><span>Copied</span></>
                       ) : (
-                        <Copy className="w-5 h-5 text-white" />
+                        <><Copy className="w-4 h-4" /><span>Copy</span></>
                       )}
                     </button>
                   </div>
                   {copied && (
-                    <div className="absolute -top-12 right-0 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg flex items-center space-x-2">
-                      <Check className="w-4 h-4" />
-                      <span>Copied!</span>
+                    <div className="absolute -top-12 right-0 bg-gray-900 text-white px-3 py-2 rounded-lg text-xs font-medium shadow-lg flex items-center space-x-2 animate-in fade-in slide-in-from-top-2">
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Copied to clipboard</span>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-200/60 p-4 rounded-xl">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-blue-100 rounded-lg">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
                       <Clock className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <p className="text-xs text-blue-600 font-medium">Expires In</p>
-                      <p className="text-lg font-bold text-blue-900">1 Hour</p>
+                      <p className="text-xs text-blue-600/80 font-medium">Expires in</p>
+                      <p className="text-xl font-semibold text-blue-900">1 Hour</p>
                     </div>
                   </div>
                 </div>
                 
-                <div className="bg-green-50 border border-green-200 p-4 rounded-lg shadow-[inset_0_1px_2px_rgba(0,0,0,0.04)]">
+                <div className="bg-gradient-to-br from-green-50 to-green-100/50 border border-green-200/60 p-4 rounded-xl">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-green-100 rounded-lg">
+                    <div className="p-2 bg-white rounded-lg shadow-sm">
                       <Inbox className="w-5 h-5 text-green-600" />
                     </div>
                     <div>
-                      <p className="text-xs text-green-600 font-medium">Emails Received</p>
-                      <p className="text-lg font-bold text-green-900">{inbox.length}</p>
+                      <p className="text-xs text-green-600/80 font-medium">Emails received</p>
+                      <p className="text-xl font-semibold text-green-900">{inbox.length}</p>
                     </div>
                   </div>
                 </div>
+
+                <div className="flex items-center justify-center">
+                  <button
+                    onClick={generateEmail}
+                    className="w-full flex items-center justify-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 py-3 px-4 rounded-xl font-medium transition-all text-sm"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    <span>Generate new email</span>
+                  </button>
+                </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button
-                  onClick={simulateEmail}
-                  className="flex-1 flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg"
-                >
-                  <Download className="w-5 h-5" />
-                  <span>Send Test Email</span>
-                </button>
-                
-                <button
-                  onClick={generateEmail}
-                  className="flex items-center justify-center space-x-2 bg-white hover:bg-gray-50 border-2 border-gray-300 text-gray-700 py-3 px-6 rounded-lg font-semibold transition-all"
-                >
-                  <RefreshCw className="w-5 h-5" />
-                  <span>New Email</span>
-                </button>
-              </div>
             </div>
           ) : null}
         </div>
 
-        {/* Inbox */}
+        {/* Inbox - Shopify Style */}
         {currentEmail && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Email List */}
-            <div className="lg:col-span-1 bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden border border-gray-200">
-              <div className="bg-gray-50 border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+            <div className="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-200/60 overflow-hidden">
+              <div className="border-b border-gray-200/60 px-5 py-4 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <Inbox className="w-5 h-5 text-green-600" />
-                  <h3 className="font-bold text-lg text-gray-900">Inbox ({inbox.length})</h3>
+                  <h3 className="font-semibold text-base text-gray-900">Inbox</h3>
+                  <span className="px-2 py-0.5 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">{inbox.length}</span>
                 </div>
                 <button
                   onClick={fetchInbox}
-                  className="p-2 hover:bg-gray-200 rounded-lg transition-all"
-                  title="Refresh"
+                  className="p-1.5 hover:bg-gray-100 rounded-lg transition-all"
+                  title="Refresh inbox"
                 >
-                  <RefreshCw className="w-5 h-5 text-gray-600" />
+                  <RefreshCw className="w-4 h-4 text-gray-600" />
                 </button>
               </div>
 
-              <div className="divide-y divide-gray-100 max-h-96 overflow-y-auto">
+              <div className="divide-y divide-gray-100 max-h-[500px] overflow-y-auto">
                 {inbox.length === 0 ? (
                   <div className="p-12 text-center">
-                    <div className="inline-block p-4 bg-gray-100 rounded-full mb-4">
-                      <Mail className="w-12 h-12 text-gray-400" />
+                    <div className="inline-flex items-center justify-center w-14 h-14 bg-gray-100 rounded-xl mb-3">
+                      <Mail className="w-7 h-7 text-gray-400" />
                     </div>
-                    <p className="text-gray-600 font-medium">No emails yet</p>
-                    <p className="text-sm text-gray-500 mt-2">New emails will appear here</p>
+                    <p className="text-gray-900 font-medium text-sm">No emails yet</p>
+                    <p className="text-xs text-gray-500 mt-1">New emails will appear here</p>
                   </div>
                 ) : (
                   inbox.map((email) => (
                     <div
                       key={email.id}
                       onClick={() => markAsRead(email)}
-                      className={`p-4 cursor-pointer hover:bg-gray-50 transition-all ${
-                        selectedEmail?.id === email.id ? 'bg-green-50 border-l-4 border-green-600' : ''
-                      } ${!email.read ? 'bg-blue-50' : ''}`}
+                      className={`p-4 cursor-pointer hover:bg-gray-50 transition-all border-l-2 ${
+                        selectedEmail?.id === email.id ? 'bg-green-50/50 border-green-600' : 'border-transparent'
+                      }`}
                     >
                       <div className="flex justify-between items-start mb-2">
                         <p className={`text-sm font-semibold ${!email.read ? 'text-gray-900' : 'text-gray-700'}`}>
@@ -399,91 +387,66 @@ function App() {
               </div>
             </div>
 
-            {/* Email Content */}
-            <div className="lg:col-span-2 bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden border border-gray-200">
+            {/* Email Content - Shopify Style */}
+            <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-200/60 overflow-hidden">
               {selectedEmail ? (
                 <div className="h-full flex flex-col">
-                  <div className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border-b border-gray-200 px-6 py-6">
-                    <div className="flex justify-between items-start mb-5">
-                      <div className="flex items-start space-x-3">
-                        <div className="p-3 bg-white rounded-xl shadow-sm border border-gray-200">
-                          <Mail className="w-6 h-6 text-indigo-600" />
+                  <div className="border-b border-gray-200/60 px-6 py-5">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <h3 className="text-xl font-semibold text-gray-900">{selectedEmail.subject}</h3>
+                          {!selectedEmail.read && (
+                            <span className="inline-flex h-2 w-2 rounded-full bg-green-600"></span>
+                          )}
                         </div>
-                        <div>
-                          <h3 className="text-2xl font-bold text-gray-900 mb-1">{selectedEmail.subject}</h3>
-                          <div className="flex items-center space-x-2">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              selectedEmail.read ? 'bg-gray-100 text-gray-700' : 'bg-green-100 text-green-800'
-                            }`}>
-                              {selectedEmail.read ? 'Read' : 'Unread'}
-                            </span>
-                            <span className="text-xs text-gray-500">•</span>
-                            <Clock className="w-3.5 h-3.5 text-gray-400" />
-                            <span className="text-xs text-gray-600">{formatTime(selectedEmail.timestamp)}</span>
-                          </div>
-                        </div>
+                        <p className="text-sm text-gray-600">{formatTime(selectedEmail.timestamp)}</p>
                       </div>
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-1">
                         <button
                           onClick={() => shareAsNoteMail(selectedEmail)}
-                          className="p-2.5 bg-white hover:bg-purple-50 border border-purple-200 rounded-lg transition-all shadow-sm hover:shadow-md"
+                          className="p-2 hover:bg-gray-100 rounded-lg transition-all"
                           title="Share as NoteMail"
                         >
-                          <ExternalLink className="w-5 h-5 text-purple-600" />
+                          <ExternalLink className="w-4 h-4 text-gray-600" />
                         </button>
                         <button
                           onClick={() => deleteEmail(selectedEmail.id)}
-                          className="p-2.5 bg-white hover:bg-red-50 border border-red-200 rounded-lg transition-all shadow-sm hover:shadow-md"
+                          className="p-2 hover:bg-red-50 rounded-lg transition-all"
                           title="Delete email"
                         >
-                          <Trash2 className="w-5 h-5 text-red-600" />
+                          <Trash2 className="w-4 h-4 text-red-600" />
                         </button>
                       </div>
                     </div>
-                    <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200 space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full">
-                          <UserCheck className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">From</p>
-                          <p className="text-sm text-gray-900 font-medium truncate">{selectedEmail.from || 'Unknown Sender'}</p>
-                        </div>
-                      </div>
-                      <div className="border-t border-gray-100"></div>
-                      <div className="flex items-center space-x-3">
-                        <div className="flex items-center justify-center w-8 h-8 bg-purple-100 rounded-full">
-                          <AlertCircle className="w-4 h-4 text-purple-600" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Subject</p>
-                          <p className="text-sm text-gray-900 font-semibold truncate">{selectedEmail.subject}</p>
-                        </div>
+                    <div className="space-y-2">
+                      <div className="flex items-start">
+                        <span className="text-xs font-medium text-gray-500 w-16">From</span>
+                        <span className="text-sm text-gray-900 flex-1">{selectedEmail.from || 'Unknown Sender'}</span>
                       </div>
                     </div>
                     {/* View Mode Toggle - Only show if both HTML and plain text exist */}
                     {selectedEmail.html_body && selectedEmail.html_body !== selectedEmail.body.replace(/\n/g, '<br>') && (
-                      <div className="flex items-center justify-center space-x-2 mt-4">
-                        <span className="text-xs font-medium text-gray-600">View Mode:</span>
+                      <div className="flex items-center space-x-1 mt-4">
                         <button
                           onClick={() => setViewMode('html')}
-                          className={`px-4 py-2 text-xs font-medium rounded-lg transition-all shadow-sm ${
+                          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
                             viewMode === 'html' 
-                              ? 'bg-indigo-600 text-white shadow-md' 
-                              : 'bg-white text-gray-700 hover:bg-indigo-50 border border-gray-300'
+                              ? 'bg-gray-900 text-white' 
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                           }`}
                         >
-                          📧 Rich HTML
+                          Rich HTML
                         </button>
                         <button
                           onClick={() => setViewMode('plain')}
-                          className={`px-4 py-2 text-xs font-medium rounded-lg transition-all shadow-sm ${
+                          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
                             viewMode === 'plain' 
-                              ? 'bg-indigo-600 text-white shadow-md' 
-                              : 'bg-white text-gray-700 hover:bg-indigo-50 border border-gray-300'
+                              ? 'bg-gray-900 text-white' 
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                           }`}
                         >
-                          📄 Plain Text
+                          Plain Text
                         </button>
                       </div>
                     )}
