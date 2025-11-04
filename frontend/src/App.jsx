@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Copy, RefreshCw, Trash2, Clock, Check, Inbox, Shield, Zap, Download, ExternalLink, ChevronRight, HelpCircle, Lock, UserCheck, AlertCircle, CheckCircle } from 'lucide-react';
+import { Mail, Copy, RefreshCw, Trash2, Clock, Check, Inbox, Shield, Zap, Download, ExternalLink, ChevronRight, HelpCircle, Lock, UserCheck, AlertCircle, CheckCircle, User, LogIn, LogOut, Crown, Star, Settings, BarChart3, TrendingUp, Package } from 'lucide-react';
 import axios from 'axios';
 
 // Use environment variable or fallback to demo mode
@@ -33,6 +33,13 @@ function App() {
     reset: Date.now() + 3600000
   });
   const [showCommandPalette, setShowCommandPalette] = useState(false);
+  
+  // Premium Mode & Authentication
+  const [showAuth, setShowAuth] = useState(false);
+  const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+  const [showDashboard, setShowDashboard] = useState(false);
 
   // Auto-generate email on page load
   useEffect(() => {
@@ -336,6 +343,36 @@ function App() {
     return date.toLocaleDateString();
   };
 
+  // Authentication handlers
+  const handleLogin = (email, password) => {
+    // Demo authentication - In production, call API
+    setUser({
+      email: email,
+      name: email.split('@')[0],
+      plan: 'Premium',
+      avatar: `https://ui-avatars.com/api/?name=${email}&background=10b981&color=fff`,
+      joined: 'November 2024',
+      emailsReceived: 247,
+      emailsStored: 89,
+      storage: '2.4 GB',
+      customDomains: 3
+    });
+    setIsAuthenticated(true);
+    setShowAuth(false);
+    setShowDashboard(true);
+  };
+
+  const handleSignup = (name, email, password) => {
+    // Demo signup - In production, call API
+    handleLogin(email, password);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUser(null);
+    setShowDashboard(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
       {/* Header - Shopify Style */}
@@ -368,6 +405,28 @@ function App() {
                 <Zap className="w-4 h-4" />
                 <span className="hidden sm:inline">Dev Mode</span>
               </button>
+              
+              {!isAuthenticated ? (
+                <button
+                  onClick={() => { setShowAuth(true); setAuthMode('login'); }}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-lg transition-all text-sm shadow-lg shadow-purple-500/30"
+                >
+                  <Crown className="w-4 h-4" />
+                  <span className="hidden sm:inline">Premium</span>
+                </button>
+              ) : (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowDashboard(!showDashboard)}
+                    className="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 border border-purple-200 rounded-lg transition-all"
+                  >
+                    <img src={user.avatar} alt={user.name} className="w-6 h-6 rounded-full" />
+                    <span className="hidden sm:inline font-medium text-gray-900">{user.name}</span>
+                    <Crown className="w-4 h-4 text-purple-600" />
+                  </button>
+                </div>
+              )}
+              
               <a
                 href="/notemail"
                 className="flex items-center space-x-2 px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg transition-all text-sm"
@@ -1616,6 +1675,262 @@ ${selectedEmail.html_body || selectedEmail.body}`}
               <p className={`text-xs ${devMode ? 'text-gray-500' : 'text-gray-600'} text-center`}>
                 Press <kbd className={`px-2 py-0.5 ${devMode ? 'bg-black border-gray-600 text-green-400' : 'bg-white border-gray-300 text-gray-700'} border rounded font-mono text-xs`}>Ctrl+/</kbd> to open this palette anytime
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Login/Signup Modal */}
+      {showAuth && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+             onClick={() => setShowAuth(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md"
+               onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="border-b border-gray-200 px-8 py-6">
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center space-x-2">
+                <Crown className="w-6 h-6 text-purple-600" />
+                <span>{authMode === 'login' ? 'Welcome Back' : 'Join Premium'}</span>
+              </h2>
+              <p className="text-gray-600 mt-2 text-sm">
+                {authMode === 'login' ? 'Sign in to access your premium account' : 'Create your premium account today'}
+              </p>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-8">
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                if (authMode === 'signup') {
+                  handleSignup(formData.get('name'), formData.get('email'), formData.get('password'));
+                } else {
+                  handleLogin(formData.get('email'), formData.get('password'));
+                }
+              }} className="space-y-4">
+                {authMode === 'signup' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                      placeholder="John Doe"
+                    />
+                  </div>
+                )}
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                    placeholder="you@example.com"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    required
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all"
+                    placeholder="••••••••"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-lg transition-all shadow-lg shadow-purple-500/30 flex items-center justify-center space-x-2"
+                >
+                  <span>{authMode === 'login' ? 'Sign In' : 'Create Account'}</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <button
+                  onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
+                  className="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  {authMode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+                  <span className="text-purple-600 font-semibold">
+                    {authMode === 'login' ? 'Sign Up' : 'Sign In'}
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Premium Dashboard */}
+      {showDashboard && isAuthenticated && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 overflow-y-auto"
+             onClick={() => setShowDashboard(false)}>
+          <div className="min-h-screen flex items-start justify-center pt-10 pb-20 px-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl"
+                 onClick={(e) => e.stopPropagation()}>
+              {/* Dashboard Header */}
+              <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-t-2xl px-8 py-6 text-white">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <img src={user.avatar} alt={user.name} className="w-16 h-16 rounded-full border-4 border-white/30" />
+                    <div>
+                      <h2 className="text-2xl font-bold">{user.name}</h2>
+                      <p className="text-purple-100 flex items-center space-x-2">
+                        <Crown className="w-4 h-4" />
+                        <span>{user.plan} Member</span>
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg transition-all flex items-center space-x-2"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Dashboard Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-8 border-b border-gray-200">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <Mail className="w-8 h-8 text-blue-600" />
+                    <Star className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <p className="text-3xl font-bold text-blue-900">{user.emailsReceived}</p>
+                  <p className="text-sm text-blue-700 font-medium">Emails Received</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <Package className="w-8 h-8 text-green-600" />
+                    <TrendingUp className="w-5 h-5 text-green-600" />
+                  </div>
+                  <p className="text-3xl font-bold text-green-900">{user.emailsStored}</p>
+                  <p className="text-sm text-green-700 font-medium">Emails Stored</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <BarChart3 className="w-8 h-8 text-purple-600" />
+                    <Crown className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <p className="text-3xl font-bold text-purple-900">{user.storage}</p>
+                  <p className="text-sm text-purple-700 font-medium">Storage Used</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl p-6 border border-pink-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <Shield className="w-8 h-8 text-pink-600" />
+                    <CheckCircle className="w-5 h-5 text-pink-600" />
+                  </div>
+                  <p className="text-3xl font-bold text-pink-900">{user.customDomains}</p>
+                  <p className="text-sm text-pink-700 font-medium">Custom Domains</p>
+                </div>
+              </div>
+
+              {/* Dashboard Content */}
+              <div className="p-8">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">Premium Features</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Feature Cards */}
+                  <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-purple-300 transition-all">
+                    <div className="flex items-start space-x-4">
+                      <div className="p-3 bg-purple-100 rounded-lg">
+                        <Clock className="w-6 h-6 text-purple-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 mb-2">Extended Storage</h4>
+                        <p className="text-sm text-gray-600">Keep emails for 30 days instead of 1 hour</p>
+                        <div className="mt-3 flex items-center space-x-2">
+                          <div className="flex-1 bg-gray-200 rounded-full h-2">
+                            <div className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full" style={{width: '65%'}}></div>
+                          </div>
+                          <span className="text-xs font-medium text-gray-600">65%</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-300 transition-all">
+                    <div className="flex items-start space-x-4">
+                      <div className="p-3 bg-blue-100 rounded-lg">
+                        <Shield className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 mb-2">Custom Domains</h4>
+                        <p className="text-sm text-gray-600">Use your own domain for temporary emails</p>
+                        <div className="mt-3 space-y-1">
+                          <p className="text-xs text-gray-500">• mail.yourdomain.com</p>
+                          <p className="text-xs text-gray-500">• temp.company.io</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-green-300 transition-all">
+                    <div className="flex items-start space-x-4">
+                      <div className="p-3 bg-green-100 rounded-lg">
+                        <Zap className="w-6 h-6 text-green-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 mb-2">API Access</h4>
+                        <p className="text-sm text-gray-600">Unlimited API requests with webhooks</p>
+                        <div className="mt-3">
+                          <code className="text-xs bg-gray-100 px-2 py-1 rounded font-mono text-gray-700">
+                            {apiKey.substring(0, 20)}...
+                          </code>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-pink-300 transition-all">
+                    <div className="flex items-start space-x-4">
+                      <div className="p-3 bg-pink-100 rounded-lg">
+                        <Settings className="w-6 h-6 text-pink-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 mb-2">Advanced Features</h4>
+                        <p className="text-sm text-gray-600">Email forwarding, filters, and automation</p>
+                        <div className="mt-3 flex items-center space-x-2">
+                          <CheckCircle className="w-4 h-4 text-green-500" />
+                          <span className="text-xs text-gray-600">All features unlocked</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Account Info */}
+                <div className="mt-8 pt-8 border-t border-gray-200">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">Account Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
+                      <User className="w-5 h-5 text-gray-600" />
+                      <div>
+                        <p className="text-xs text-gray-500">Email</p>
+                        <p className="font-medium text-gray-900">{user.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg">
+                      <Clock className="w-5 h-5 text-gray-600" />
+                      <div>
+                        <p className="text-xs text-gray-500">Member Since</p>
+                        <p className="font-medium text-gray-900">{user.joined}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
