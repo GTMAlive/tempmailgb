@@ -182,7 +182,7 @@ function Dashboard() {
 
         {/* Page Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto px-8 py-6">
+          <div className="px-8 py-6">
             {renderContent()}
           </div>
         </div>
