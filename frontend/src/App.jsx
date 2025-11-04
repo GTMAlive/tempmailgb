@@ -14,6 +14,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [expiresAt, setExpiresAt] = useState(null);
+  const [viewMode, setViewMode] = useState('html'); // 'html' or 'plain'
 
   // Auto-generate email on page load
   useEffect(() => {
@@ -160,6 +161,7 @@ function App() {
             from: 'welcome@tempmail.com',
             subject: 'Welcome to TempMail! 🎉',
             body: 'Thank you for using TempMail! This is a demo email showing how our temporary email service works.\n\nYour temporary email address is active and ready to receive messages. Use it anywhere you need a disposable email address.\n\nFeatures:\n• Instant email generation\n• No registration required\n• Automatic expiration after 1 hour\n• Complete privacy protection\n\nEnjoy using TempMail!',
+            html_body: '<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px;"><div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"><h2 style="color: #667eea; margin-top: 0;">Welcome to TempMail! 🎉</h2><p style="color: #333; line-height: 1.6; margin-bottom: 20px;">Thank you for using TempMail! This is a demo email showing how our temporary email service works.</p><p style="color: #666; line-height: 1.6; margin-bottom: 20px;">Your temporary email address is active and ready to receive messages. Use it anywhere you need a disposable email address.</p><div style="background: #f7fafc; padding: 20px; border-radius: 6px; margin: 20px 0;"><h3 style="color: #667eea; margin-top: 0; font-size: 16px;">Features:</h3><ul style="color: #333; line-height: 1.8; margin: 0; padding-left: 20px;"><li>Instant email generation</li><li>No registration required</li><li>Automatic expiration after 1 hour</li><li>Complete privacy protection</li></ul></div><p style="color: #333; line-height: 1.6; margin-bottom: 0;">Enjoy using TempMail!</p></div></div>',
             timestamp: Date.now(),
             read: false
           },
@@ -168,6 +170,7 @@ function App() {
             from: 'verify@service.com',
             subject: 'Email Verification Code',
             body: 'Your verification code is: 742691\n\nThis code will expire in 10 minutes.\n\nIf you didn\'t request this code, please ignore this email.',
+            html_body: '<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;"><div style="background: #fff; padding: 30px; border: 2px solid #e2e8f0; border-radius: 8px;"><h2 style="color: #2d3748; margin-top: 0;">Email Verification</h2><p style="color: #4a5568; line-height: 1.6; margin-bottom: 20px;">Your verification code is:</p><div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 32px; font-weight: bold; letter-spacing: 8px; text-align: center; padding: 20px; border-radius: 8px; margin: 20px 0;">742691</div><p style="color: #718096; font-size: 14px; line-height: 1.6; margin-bottom: 20px;">This code will expire in <strong>10 minutes</strong>.</p><p style="color: #a0aec0; font-size: 12px; line-height: 1.6; margin-bottom: 0;">If you didn\'t request this code, please ignore this email.</p></div></div>',
             timestamp: Date.now(),
             read: false
           }
@@ -424,11 +427,47 @@ function App() {
                         <span className="text-gray-900 bg-white border border-gray-200 px-3 py-1.5 rounded-lg flex-1">{new Date(selectedEmail.timestamp).toLocaleString()}</span>
                       </div>
                     </div>
+                    {/* View Mode Toggle */}
+                    <div className="flex items-center justify-end space-x-2 px-6 py-2 bg-gray-50 border-t border-gray-200">
+                      <span className="text-xs text-gray-500">View:</span>
+                      <button
+                        onClick={() => setViewMode('html')}
+                        className={`px-3 py-1 text-xs rounded-md transition-all ${
+                          viewMode === 'html' 
+                            ? 'bg-blue-600 text-white font-medium' 
+                            : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                        }`}
+                      >
+                        HTML
+                      </button>
+                      <button
+                        onClick={() => setViewMode('plain')}
+                        className={`px-3 py-1 text-xs rounded-md transition-all ${
+                          viewMode === 'plain' 
+                            ? 'bg-blue-600 text-white font-medium' 
+                            : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                        }`}
+                      >
+                        Plain Text
+                      </button>
+                    </div>
                   </div>
                   <div className="flex-1 p-8 overflow-y-auto bg-white">
-                    <div className="prose max-w-none">
-                      <p className="whitespace-pre-wrap text-gray-700 leading-relaxed text-base">{selectedEmail.body}</p>
-                    </div>
+                    {viewMode === 'html' && selectedEmail.html_body ? (
+                      <div 
+                        className="email-content prose max-w-none"
+                        dangerouslySetInnerHTML={{ __html: selectedEmail.html_body }}
+                        style={{
+                          fontFamily: 'Arial, sans-serif',
+                          lineHeight: '1.6',
+                          color: '#333'
+                        }}
+                      />
+                    ) : (
+                      <div className="prose max-w-none">
+                        <p className="whitespace-pre-wrap text-gray-700 leading-relaxed text-base">{selectedEmail.body}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : (

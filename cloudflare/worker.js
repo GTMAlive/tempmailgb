@@ -27,15 +27,18 @@ export default {
     
     // Extract email body using proper parsing
     let body = '';
+    let htmlBody = '';
     
     try {
-      // Try to get HTML content first, then fall back to text
+      // Get both HTML and plain text versions
       if (message.html) {
-        const htmlContent = await message.html();
-        // Strip HTML tags to get plain text
-        body = htmlContent
+        htmlBody = await message.html();
+        // Strip HTML tags to get plain text for body field
+        body = htmlBody
           .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
           .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+          .replace(/<br\s*\/?>/gi, '\n')
+          .replace(/<\/p>/gi, '\n\n')
           .replace(/<[^>]+>/g, ' ')
           .replace(/&nbsp;/g, ' ')
           .replace(/&lt;/g, '<')
@@ -46,6 +49,7 @@ export default {
           .trim();
       } else if (message.text) {
         body = await message.text();
+        htmlBody = body.replace(/\n/g, '<br>'); // Convert newlines to HTML
       } else {
         // Fallback: parse raw email
         const reader = message.raw.getReader();
@@ -91,11 +95,12 @@ export default {
       
       // Clean up body
       body = body.trim() || 'No content';
+      htmlBody = htmlBody.trim() || body.replace(/\n/g, '<br>');
       
-      // Save email to database
+      // Save email to database with both HTML and plain text
       await env.DB.prepare(
-        'INSERT INTO inbox (email_address, from_address, subject, body, timestamp, read) VALUES (?, ?, ?, ?, ?, 0)'
-      ).bind(to, from, subject, body, Date.now()).run();
+        'INSERT INTO inbox (email_address, from_address, subject, body, html_body, timestamp, read) VALUES (?, ?, ?, ?, ?, ?, 0)'
+      ).bind(to, from, subject, body, htmlBody, Date.now()).run();
       
       console.log(`Email received: ${from} -> ${to}`);
     } catch (error) {
@@ -278,11 +283,14 @@ async function handleSimulateEmail(db, email) {
   const from = `noreply@${['example.com', 'service.com', 'app.io', 'platform.net'][Math.floor(Math.random() * 4)]}`;
   const subject = subjects[Math.floor(Math.random() * subjects.length)];
   const body = bodies[Math.floor(Math.random() * bodies.length)];
+  const htmlBody = `<div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px;">
+    <p style="color: #333; line-height: 1.6;">${body.replace(/\n/g, '<br>')}</p>
+  </div>`;
 
   // Insert simulated email
   const result = await db.prepare(
-    'INSERT INTO inbox (email_address, from_address, subject, body, timestamp, read) VALUES (?, ?, ?, ?, ?, 0)'
-  ).bind(email, from, subject, body, Date.now()).run();
+    'INSERT INTO inbox (email_address, from_address, subject, body, html_body, timestamp, read) VALUES (?, ?, ?, ?, ?, ?, 0)'
+  ).bind(email, from, subject, body, htmlBody, Date.now()).run();
 
   // Get the inserted email
   const newEmail = await db.prepare(
