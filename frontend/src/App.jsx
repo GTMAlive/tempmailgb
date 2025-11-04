@@ -14,7 +14,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [expiresAt, setExpiresAt] = useState(null);
-  const [viewMode, setViewMode] = useState('html'); // 'html' or 'plain'
+  const [viewMode, setViewMode] = useState('html'); // 'html', 'plain', or 'raw'
   const [countdown, setCountdown] = useState(5); // Auto-refresh countdown
   const [devMode, setDevMode] = useState(false); // Developer mode toggle
   const [networkLogs, setNetworkLogs] = useState([]);
@@ -542,6 +542,16 @@ function App() {
                               .html
                             </button>
                             <button
+                              onClick={() => setViewMode('raw')}
+                              className={`px-3 py-1 rounded text-xs font-semibold transition-all ${
+                                viewMode === 'raw'
+                                  ? 'bg-green-600 text-black'
+                                  : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                              }`}
+                            >
+                              .raw
+                            </button>
+                            <button
                               onClick={() => deleteEmail(selectedEmail.id)}
                               className="ml-auto px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-semibold transition-all"
                             >
@@ -551,7 +561,143 @@ function App() {
                         </div>
                         
                         <div className="bg-gray-900 rounded border border-gray-700 p-4 max-h-[400px] overflow-y-auto">
-                          {viewMode === 'html' && selectedEmail.html_body ? (
+                          {viewMode === 'raw' ? (
+                            // Raw email view with MIME headers
+                            <div className="space-y-4">
+                              {/* Action Buttons */}
+                              <div className="flex items-center space-x-2 pb-3 border-b border-gray-800">
+                                <button
+                                  onClick={() => {
+                                    const rawContent = `From: ${selectedEmail.from}
+To: ${currentEmail}
+Subject: ${selectedEmail.subject}
+Date: ${new Date(selectedEmail.timestamp).toUTCString()}
+Message-ID: <${selectedEmail.id}@ainewmail.online>
+MIME-Version: 1.0
+Content-Type: ${selectedEmail.html_body ? 'text/html' : 'text/plain'}; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+${selectedEmail.html_body || selectedEmail.body}`;
+                                    navigator.clipboard.writeText(rawContent);
+                                  }}
+                                  className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded font-semibold transition-all flex items-center space-x-1"
+                                >
+                                  <Copy className="w-3 h-3" />
+                                  <span>COPY RAW</span>
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    const rawContent = `From: ${selectedEmail.from}
+To: ${currentEmail}
+Subject: ${selectedEmail.subject}
+Date: ${new Date(selectedEmail.timestamp).toUTCString()}
+Message-ID: <${selectedEmail.id}@ainewmail.online>
+MIME-Version: 1.0
+Content-Type: ${selectedEmail.html_body ? 'text/html' : 'text/plain'}; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+${selectedEmail.html_body || selectedEmail.body}`;
+                                    const blob = new Blob([rawContent], { type: 'message/rfc822' });
+                                    const url = window.URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = `email-${selectedEmail.id}.eml`;
+                                    a.click();
+                                    window.URL.revokeObjectURL(url);
+                                  }}
+                                  className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-black text-xs rounded font-semibold transition-all flex items-center space-x-1"
+                                >
+                                  <Download className="w-3 h-3" />
+                                  <span>DOWNLOAD .EML</span>
+                                </button>
+                              </div>
+
+                              {/* MIME Headers Section */}
+                              <div>
+                                <h4 className="text-cyan-400 text-xs font-bold mb-2 flex items-center space-x-2">
+                                  <span>📧 MIME HEADERS</span>
+                                </h4>
+                                <div className="bg-black border border-gray-800 rounded p-3 space-y-1">
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">From:</span>
+                                    <span className="text-green-400 flex-1">{selectedEmail.from}</span>
+                                  </div>
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">To:</span>
+                                    <span className="text-green-400 flex-1">{currentEmail}</span>
+                                  </div>
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">Subject:</span>
+                                    <span className="text-green-400 flex-1">{selectedEmail.subject}</span>
+                                  </div>
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">Date:</span>
+                                    <span className="text-green-400 flex-1">{new Date(selectedEmail.timestamp).toUTCString()}</span>
+                                  </div>
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">Message-ID:</span>
+                                    <span className="text-green-400 flex-1">&lt;{selectedEmail.id}@ainewmail.online&gt;</span>
+                                  </div>
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">MIME-Version:</span>
+                                    <span className="text-green-400 flex-1">1.0</span>
+                                  </div>
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">Content-Type:</span>
+                                    <span className="text-green-400 flex-1">{selectedEmail.html_body ? 'text/html' : 'text/plain'}; charset=UTF-8</span>
+                                  </div>
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">Content-Transfer:</span>
+                                    <span className="text-green-400 flex-1">8bit</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* SMTP Details */}
+                              <div>
+                                <h4 className="text-cyan-400 text-xs font-bold mb-2 flex items-center space-x-2">
+                                  <span>🔧 SMTP DETAILS</span>
+                                </h4>
+                                <div className="bg-black border border-gray-800 rounded p-3 space-y-1">
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">Return-Path:</span>
+                                    <span className="text-yellow-400 flex-1">&lt;{selectedEmail.from}&gt;</span>
+                                  </div>
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">Received:</span>
+                                    <span className="text-yellow-400 flex-1">by ainewmail.online</span>
+                                  </div>
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">X-Mailer:</span>
+                                    <span className="text-yellow-400 flex-1">TempMail Service v1.0</span>
+                                  </div>
+                                  <div className="flex text-xs font-mono">
+                                    <span className="text-purple-400 w-32">X-Priority:</span>
+                                    <span className="text-yellow-400 flex-1">3 (Normal)</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Email Source */}
+                              <div>
+                                <h4 className="text-cyan-400 text-xs font-bold mb-2 flex items-center space-x-2">
+                                  <span>📄 EMAIL SOURCE</span>
+                                </h4>
+                                <pre className="bg-black border border-gray-800 rounded p-3 text-green-400 text-xs font-mono overflow-x-auto whitespace-pre-wrap">
+{`From: ${selectedEmail.from}
+To: ${currentEmail}
+Subject: ${selectedEmail.subject}
+Date: ${new Date(selectedEmail.timestamp).toUTCString()}
+Message-ID: <${selectedEmail.id}@ainewmail.online>
+MIME-Version: 1.0
+Content-Type: ${selectedEmail.html_body ? 'text/html' : 'text/plain'}; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+${selectedEmail.html_body || selectedEmail.body}`}
+                                </pre>
+                              </div>
+                            </div>
+                          ) : viewMode === 'html' && selectedEmail.html_body ? (
                             <div dangerouslySetInnerHTML={{ __html: selectedEmail.html_body }} 
                                  className="text-gray-300 text-sm"
                                  style={{ fontFamily: 'system-ui' }} />
