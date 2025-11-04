@@ -32,6 +32,7 @@ function App() {
     remaining: 87,
     reset: Date.now() + 3600000
   });
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
 
   // Auto-generate email on page load
   useEffect(() => {
@@ -65,6 +66,53 @@ function App() {
       };
     }
   }, [currentEmail]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      // Ctrl+N: New email
+      if (e.ctrlKey && e.key === 'n') {
+        e.preventDefault();
+        generateEmail();
+      }
+      
+      // Ctrl+R: Refresh inbox
+      if (e.ctrlKey && e.key === 'r') {
+        e.preventDefault();
+        handleManualRefresh();
+      }
+      
+      // Ctrl+C: Copy email address
+      if (e.ctrlKey && e.key === 'c' && currentEmail && !window.getSelection().toString()) {
+        e.preventDefault();
+        copyToClipboard();
+      }
+      
+      // Ctrl+D: Delete selected email
+      if (e.ctrlKey && e.key === 'd' && selectedEmail) {
+        e.preventDefault();
+        deleteEmail(selectedEmail.id);
+      }
+      
+      // Ctrl+/: Command palette
+      if (e.ctrlKey && e.key === '/') {
+        e.preventDefault();
+        setShowCommandPalette(true);
+      }
+      
+      // Escape: Clear selection or close command palette
+      if (e.key === 'Escape') {
+        if (showCommandPalette) {
+          setShowCommandPalette(false);
+        } else if (selectedEmail) {
+          setSelectedEmail(null);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [currentEmail, selectedEmail, showCommandPalette]);
 
   // Network logging helper
   const logNetwork = (method, endpoint, status, duration) => {
@@ -1314,6 +1362,118 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* Command Palette Modal */}
+      {showCommandPalette && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-20"
+             onClick={() => setShowCommandPalette(false)}>
+          <div className={`${devMode ? 'bg-black border-gray-700' : 'bg-white'} rounded-xl shadow-2xl w-full max-w-2xl mx-4 border ${devMode ? 'border-gray-700' : 'border-gray-200'}`}
+               onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className={`border-b ${devMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-gray-50'} px-6 py-4`}>
+              <h3 className={`text-lg font-bold ${devMode ? 'text-green-400' : 'text-gray-900'} flex items-center space-x-2`}>
+                <Zap className="w-5 h-5" />
+                <span>Command Palette</span>
+              </h3>
+              <p className={`text-sm ${devMode ? 'text-gray-400' : 'text-gray-600'} mt-1`}>
+                Keyboard shortcuts for faster navigation
+              </p>
+            </div>
+
+            {/* Commands List */}
+            <div className="p-6 space-y-3">
+              <div className={`flex items-center justify-between p-4 rounded-lg ${devMode ? 'bg-gray-900 border border-gray-700 hover:border-green-600' : 'bg-gray-50 hover:bg-gray-100'} transition-all cursor-pointer`}
+                   onClick={() => { generateEmail(); setShowCommandPalette(false); }}>
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 ${devMode ? 'bg-green-900/30' : 'bg-green-100'} rounded-lg`}>
+                    <Mail className={`w-5 h-5 ${devMode ? 'text-green-400' : 'text-green-600'}`} />
+                  </div>
+                  <div>
+                    <p className={`font-semibold ${devMode ? 'text-green-400' : 'text-gray-900'}`}>Generate New Email</p>
+                    <p className={`text-xs ${devMode ? 'text-gray-500' : 'text-gray-600'}`}>Create a fresh temporary email address</p>
+                  </div>
+                </div>
+                <kbd className={`px-3 py-1 ${devMode ? 'bg-black border-gray-600 text-green-400' : 'bg-white border-gray-300 text-gray-700'} border rounded text-sm font-mono`}>
+                  Ctrl+N
+                </kbd>
+              </div>
+
+              <div className={`flex items-center justify-between p-4 rounded-lg ${devMode ? 'bg-gray-900 border border-gray-700 hover:border-green-600' : 'bg-gray-50 hover:bg-gray-100'} transition-all cursor-pointer`}
+                   onClick={() => { handleManualRefresh(); setShowCommandPalette(false); }}>
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 ${devMode ? 'bg-blue-900/30' : 'bg-blue-100'} rounded-lg`}>
+                    <RefreshCw className={`w-5 h-5 ${devMode ? 'text-blue-400' : 'text-blue-600'}`} />
+                  </div>
+                  <div>
+                    <p className={`font-semibold ${devMode ? 'text-cyan-400' : 'text-gray-900'}`}>Refresh Inbox</p>
+                    <p className={`text-xs ${devMode ? 'text-gray-500' : 'text-gray-600'}`}>Fetch latest emails</p>
+                  </div>
+                </div>
+                <kbd className={`px-3 py-1 ${devMode ? 'bg-black border-gray-600 text-cyan-400' : 'bg-white border-gray-300 text-gray-700'} border rounded text-sm font-mono`}>
+                  Ctrl+R
+                </kbd>
+              </div>
+
+              <div className={`flex items-center justify-between p-4 rounded-lg ${devMode ? 'bg-gray-900 border border-gray-700 hover:border-green-600' : 'bg-gray-50 hover:bg-gray-100'} transition-all cursor-pointer`}
+                   onClick={() => { copyToClipboard(); setShowCommandPalette(false); }}>
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 ${devMode ? 'bg-purple-900/30' : 'bg-purple-100'} rounded-lg`}>
+                    <Copy className={`w-5 h-5 ${devMode ? 'text-purple-400' : 'text-purple-600'}`} />
+                  </div>
+                  <div>
+                    <p className={`font-semibold ${devMode ? 'text-purple-400' : 'text-gray-900'}`}>Copy Email Address</p>
+                    <p className={`text-xs ${devMode ? 'text-gray-500' : 'text-gray-600'}`}>Copy to clipboard</p>
+                  </div>
+                </div>
+                <kbd className={`px-3 py-1 ${devMode ? 'bg-black border-gray-600 text-purple-400' : 'bg-white border-gray-300 text-gray-700'} border rounded text-sm font-mono`}>
+                  Ctrl+C
+                </kbd>
+              </div>
+
+              {selectedEmail && (
+                <div className={`flex items-center justify-between p-4 rounded-lg ${devMode ? 'bg-gray-900 border border-gray-700 hover:border-red-600' : 'bg-gray-50 hover:bg-gray-100'} transition-all cursor-pointer`}
+                     onClick={() => { deleteEmail(selectedEmail.id); setShowCommandPalette(false); }}>
+                  <div className="flex items-center space-x-3">
+                    <div className={`p-2 ${devMode ? 'bg-red-900/30' : 'bg-red-100'} rounded-lg`}>
+                      <Trash2 className={`w-5 h-5 ${devMode ? 'text-red-400' : 'text-red-600'}`} />
+                    </div>
+                    <div>
+                      <p className={`font-semibold ${devMode ? 'text-red-400' : 'text-gray-900'}`}>Delete Selected Email</p>
+                      <p className={`text-xs ${devMode ? 'text-gray-500' : 'text-gray-600'}`}>Remove from inbox</p>
+                    </div>
+                  </div>
+                  <kbd className={`px-3 py-1 ${devMode ? 'bg-black border-gray-600 text-red-400' : 'bg-white border-gray-300 text-gray-700'} border rounded text-sm font-mono`}>
+                    Ctrl+D
+                  </kbd>
+                </div>
+              )}
+
+              <div className={`flex items-center justify-between p-4 rounded-lg ${devMode ? 'bg-gray-900 border border-gray-700 hover:border-green-600' : 'bg-gray-50 hover:bg-gray-100'} transition-all cursor-pointer`}
+                   onClick={() => setShowCommandPalette(false)}>
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 ${devMode ? 'bg-gray-700' : 'bg-gray-200'} rounded-lg`}>
+                    <span className={`text-lg font-bold ${devMode ? 'text-gray-400' : 'text-gray-600'}`}>⎋</span>
+                  </div>
+                  <div>
+                    <p className={`font-semibold ${devMode ? 'text-gray-400' : 'text-gray-900'}`}>Clear Selection / Close</p>
+                    <p className={`text-xs ${devMode ? 'text-gray-500' : 'text-gray-600'}`}>Deselect email or close palette</p>
+                  </div>
+                </div>
+                <kbd className={`px-3 py-1 ${devMode ? 'bg-black border-gray-600 text-gray-400' : 'bg-white border-gray-300 text-gray-700'} border rounded text-sm font-mono`}>
+                  Esc
+                </kbd>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className={`border-t ${devMode ? 'border-gray-700 bg-gray-800' : 'border-gray-200 bg-gray-50'} px-6 py-4`}>
+              <p className={`text-xs ${devMode ? 'text-gray-500' : 'text-gray-600'} text-center`}>
+                Press <kbd className={`px-2 py-0.5 ${devMode ? 'bg-black border-gray-600 text-green-400' : 'bg-white border-gray-300 text-gray-700'} border rounded font-mono text-xs`}>Ctrl+/</kbd> to open this palette anytime
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
