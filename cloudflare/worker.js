@@ -25,22 +25,59 @@ export default {
     const from = message.from;
     const subject = message.headers.get('subject') || 'No Subject';
     
-    // Extract plain text body
-    const reader = message.raw.getReader();
-    const decoder = new TextDecoder();
-    let emailBody = '';
-    
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      emailBody += decoder.decode(value, { stream: true });
-    }
-    
-    // Simple body extraction (you might want to improve this)
-    const bodyMatch = emailBody.match(/Content-Type: text\/plain[\s\S]*?\n\n([\s\S]*?)(?=\n--|\n$)/);
-    const body = bodyMatch ? bodyMatch[1].trim() : emailBody.substring(0, 500);
+    // Extract email body using proper parsing
+    let body = '';
     
     try {
+      // Try to get text/plain content first
+      if (message.text) {
+        body = await message.text();
+      } else {
+        // Fallback: parse raw email
+        const reader = message.raw.getReader();
+        const decoder = new TextDecoder();
+        let rawEmail = '';
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          rawEmail += decoder.decode(value, { stream: true });
+        }
+        
+        // Extract body after double newline (end of headers)
+        const parts = rawEmail.split('\n\n');
+        if (parts.length > 1) {
+          // Get everything after headers
+          body = parts.slice(1).join('\n\n');
+          
+          // Remove email headers that might be in body
+          body = body
+            .replace(/^Received:.*$/gm, '')
+            .replace(/^ARC-.*$/gm, '')
+            .replace(/^DKIM-.*$/gm, '')
+            .replace(/^Authentication-Results:.*$/gm, '')
+            .replace(/^X-.*$/gm, '')
+            .replace(/^Content-Type:.*$/gm, '')
+            .replace(/^Content-Transfer-Encoding:.*$/gm, '')
+            .replace(/^MIME-Version:.*$/gm, '')
+            .replace(/^\s*from.*outbound-mail\.sendgrid\.net.*$/gm, '')
+            .replace(/^\s*by cloudflare.*$/gm, '')
+            .replace(/^\s*for.*$/gm, '')
+            .trim();
+          
+          // Remove multiple consecutive blank lines
+          body = body.replace(/\n{3,}/g, '\n\n');
+          
+          // Limit body length
+          if (body.length > 5000) {
+            body = body.substring(0, 5000) + '\n\n[Email truncated...]';
+          }
+        }
+      }
+      
+      // Clean up body
+      body = body.trim() || 'No content';
+      
       // Save email to database
       await env.DB.prepare(
         'INSERT INTO inbox (email_address, from_address, subject, body, timestamp, read) VALUES (?, ?, ?, ?, ?, 0)'
