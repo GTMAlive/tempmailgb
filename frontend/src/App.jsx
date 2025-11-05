@@ -1209,17 +1209,17 @@ ${selectedEmail.html_body || selectedEmail.body}`}
                     <div
                       key={email.id}
                       onClick={() => markAsRead(email)}
-                      className={`p-4 cursor-pointer hover:bg-gray-50 transition-all border-l-2 ${
+                      className={`p-4 cursor-pointer hover:bg-gray-50 transition-all border-l-2 text-left ${
                         selectedEmail?.id === email.id ? 'bg-green-50/50 border-green-600' : 'border-transparent'
                       }`}
                     >
                       <div className="flex justify-between items-start mb-2">
-                        <p className={`text-sm font-semibold ${!email.read ? 'text-gray-900' : 'text-gray-700'}`}>
+                        <p className={`text-sm font-semibold text-left ${!email.read ? 'text-gray-900' : 'text-gray-700'}`}>
                           {email.from}
                         </p>
                         <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">{formatTime(email.timestamp)}</span>
                       </div>
-                      <p className={`text-sm ${!email.read ? 'font-bold text-gray-900' : 'text-gray-600'} truncate mb-2`}>
+                      <p className={`text-sm text-left ${!email.read ? 'font-bold text-gray-900' : 'text-gray-600'} truncate mb-2`}>
                         {email.subject}
                       </p>
                       {!email.read && (
@@ -1238,16 +1238,16 @@ ${selectedEmail.html_body || selectedEmail.body}`}
             <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-200/60 overflow-hidden">
               {selectedEmail ? (
                 <div className="h-full flex flex-col">
-                  <div className="border-b border-gray-200/60 px-6 py-5">
+                  <div className="border-b border-gray-200/60 px-6 py-5 text-left">
                     <div className="flex justify-between items-start mb-4">
-                      <div className="flex-1">
+                      <div className="flex-1 text-left">
                         <div className="flex items-center space-x-2 mb-2">
-                          <h3 className="text-xl font-semibold text-gray-900">{selectedEmail.subject}</h3>
+                          <h3 className="text-xl font-semibold text-gray-900 text-left">{selectedEmail.subject}</h3>
                           {!selectedEmail.read && (
                             <span className="inline-flex h-2 w-2 rounded-full bg-green-600"></span>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600">{formatTime(selectedEmail.timestamp)}</p>
+                        <p className="text-sm text-gray-600 text-left">{formatTime(selectedEmail.timestamp)}</p>
                       </div>
                       <div className="flex items-center space-x-1">
                         <button
@@ -1266,10 +1266,10 @@ ${selectedEmail.html_body || selectedEmail.body}`}
                         </button>
                       </div>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-2 text-left">
                       <div className="flex items-start">
-                        <span className="text-xs font-medium text-gray-500 w-16">From</span>
-                        <span className="text-sm text-gray-900 flex-1">{selectedEmail.from || 'Unknown Sender'}</span>
+                        <span className="text-xs font-medium text-gray-500 w-16 text-left">From</span>
+                        <span className="text-sm text-gray-900 flex-1 text-left">{selectedEmail.from || 'Unknown Sender'}</span>
                       </div>
                     </div>
                     {/* View Mode Toggle - Only show if both HTML and plain text exist */}
