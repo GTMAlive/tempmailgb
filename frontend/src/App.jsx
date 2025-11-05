@@ -402,7 +402,7 @@ function App() {
                 <Mail className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
               </div>
               <div>
-                <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">TempMail</h1>
+                <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">TempMail<sup className="text-xs sm:text-sm ml-0.5">GB</sup></h1>
               </div>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
@@ -1452,7 +1452,7 @@ ${selectedEmail.html_body || selectedEmail.body}`}
       <section className="mt-8 sm:mt-16 bg-white py-8 sm:py-16 border-y border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">How to Use TempMail</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">How to Use TempMail<sup className="text-sm sm:text-base ml-0.5">GB</sup></h2>
             <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
               Get started with your temporary email in three simple steps
             </p>
@@ -1675,9 +1675,9 @@ ${selectedEmail.html_body || selectedEmail.body}`}
               <div className="bg-green-600 p-1.5 sm:p-2 rounded-lg">
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900">TempMail</h3>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900">TempMail<sup className="text-xs sm:text-sm ml-0.5">GB</sup></h3>
             </div>
-            <p className="text-gray-600 text-xs sm:text-sm mb-1 sm:mb-2">© 2024 TempMail - All rights reserved</p>
+            <p className="text-gray-600 text-xs sm:text-sm mb-1 sm:mb-2">© 2024 TempMail<sup className="text-[10px] sm:text-xs">GB</sup> - All rights reserved</p>
             <p className="text-xs text-gray-500">Free disposable temporary email service</p>
           </div>
         </div>
@@ -1805,7 +1805,7 @@ ${selectedEmail.html_body || selectedEmail.body}`}
             <div className="border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
               <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center space-x-2">
                 <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
-                <span>{authMode === 'login' ? 'Welcome Back' : 'Join Premium'}</span>
+                <span>{authMode === 'login' ? 'Welcome Back' : 'Join Premium'}<sup className="text-sm ml-0.5">GB</sup></span>
               </h2>
               <p className="text-gray-600 mt-2 text-xs sm:text-sm">
                 {authMode === 'login' ? 'Sign in to access your premium account' : 'Create your premium account today'}
