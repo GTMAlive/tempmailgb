@@ -5,6 +5,9 @@ import App from './App';
 import NoteMail from './NoteMail';
 import Dashboard from './Dashboard';
 import BallonMail from './BallonMail';
+import EasyMail from './EasyMail';
+import SpeedMail from './SpeedMail';
+import LeadCap from './LeadCap';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -15,6 +18,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route path="/notemail" element={<NoteMail />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/ballonmail" element={<BallonMail />} />
+        <Route path="/easymail" element={<EasyMail />} />
+        <Route path="/speedmail" element={<SpeedMail />} />
+        <Route path="/leadcap" element={<LeadCap />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

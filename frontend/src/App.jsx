@@ -504,11 +504,11 @@ function App() {
                           className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-all group"
                         >
                           <div className="bg-blue-100 p-3 rounded-lg group-hover:bg-blue-200 transition-all">
-                            <Zap className="w-6 h-6 text-blue-600" />
+                            <Mail className="w-6 h-6 text-blue-600" />
                           </div>
                           <div className="flex-1">
                             <h4 className="font-semibold text-gray-900">EasyMail</h4>
-                            <p className="text-xs text-gray-500">Simple & fast emails</p>
+                            <p className="text-xs text-gray-500">Simple temporary emails</p>
                           </div>
                           <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
                         </a>
@@ -519,11 +519,11 @@ function App() {
                           className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-all group"
                         >
                           <div className="bg-orange-100 p-3 rounded-lg group-hover:bg-orange-200 transition-all">
-                            <TrendingUp className="w-6 h-6 text-orange-600" />
+                            <Mail className="w-6 h-6 text-orange-600" />
                           </div>
                           <div className="flex-1">
                             <h4 className="font-semibold text-gray-900">SpeedMail</h4>
-                            <p className="text-xs text-gray-500">Ultra-fast delivery</p>
+                            <p className="text-xs text-gray-500">Fast temporary emails</p>
                           </div>
                           <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
                         </a>
@@ -533,12 +533,12 @@ function App() {
                           href="/leadcap"
                           className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-all group"
                         >
-                          <div className="bg-purple-100 p-3 rounded-lg group-hover:bg-purple-200 transition-all">
-                            <BarChart3 className="w-6 h-6 text-purple-600" />
+                          <div className="bg-teal-100 p-3 rounded-lg group-hover:bg-teal-200 transition-all">
+                            <Mail className="w-6 h-6 text-teal-600" />
                           </div>
                           <div className="flex-1">
                             <h4 className="font-semibold text-gray-900">LeadCap</h4>
-                            <p className="text-xs text-gray-500">Capture & manage leads</p>
+                            <p className="text-xs text-gray-500">Lead capture temporary email service</p>
                           </div>
                           <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
                         </a>
