@@ -35,6 +35,7 @@ function App() {
     reset: Date.now() + 3600000
   });
   const [showCommandPalette, setShowCommandPalette] = useState(false);
+  const [showMegaMenu, setShowMegaMenu] = useState(false);
   
   // Premium Mode & Authentication
   const [showAuth, setShowAuth] = useState(false);
@@ -439,12 +440,108 @@ function App() {
                 </button>
               )}
               
-              <button
-                className="p-2 hover:bg-gray-100 rounded-lg transition-all"
-                title="Menu"
-              >
-                <Grid3x3 className="w-6 h-6 text-gray-700" />
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setShowMegaMenu(!showMegaMenu)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-all"
+                  title="Menu"
+                >
+                  <Grid3x3 className="w-6 h-6 text-gray-700" />
+                </button>
+                
+                {/* Mega Menu */}
+                {showMegaMenu && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setShowMegaMenu(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 overflow-hidden">
+                      <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4">
+                        <h3 className="text-white font-bold text-lg">Mail Services</h3>
+                        <p className="text-purple-100 text-sm mt-1">Choose your mail service</p>
+                      </div>
+                      
+                      <div className="p-4 space-y-2">
+                        {/* NoteMail */}
+                        <a
+                          href="/notemail"
+                          className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-all group"
+                        >
+                          <div className="bg-green-100 p-3 rounded-lg group-hover:bg-green-200 transition-all">
+                            <Mail className="w-6 h-6 text-green-600" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900">NoteMail</h4>
+                            <p className="text-xs text-gray-500">Share emails as notes</p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
+                        </a>
+                        
+                        {/* EasyMail */}
+                        <a
+                          href="/easymail"
+                          className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-all group"
+                        >
+                          <div className="bg-blue-100 p-3 rounded-lg group-hover:bg-blue-200 transition-all">
+                            <Zap className="w-6 h-6 text-blue-600" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900">EasyMail</h4>
+                            <p className="text-xs text-gray-500">Simple & fast emails</p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
+                        </a>
+                        
+                        {/* SpeedMail */}
+                        <a
+                          href="/speedmail"
+                          className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-all group"
+                        >
+                          <div className="bg-orange-100 p-3 rounded-lg group-hover:bg-orange-200 transition-all">
+                            <TrendingUp className="w-6 h-6 text-orange-600" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900">SpeedMail</h4>
+                            <p className="text-xs text-gray-500">Ultra-fast delivery</p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
+                        </a>
+                        
+                        {/* LeadCap */}
+                        <a
+                          href="/leadcap"
+                          className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-all group"
+                        >
+                          <div className="bg-purple-100 p-3 rounded-lg group-hover:bg-purple-200 transition-all">
+                            <BarChart3 className="w-6 h-6 text-purple-600" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900">LeadCap</h4>
+                            <p className="text-xs text-gray-500">Capture & manage leads</p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
+                        </a>
+                        
+                        {/* BallonMail */}
+                        <a
+                          href="/ballonmail"
+                          className="flex items-center space-x-4 p-4 rounded-lg hover:bg-gray-50 transition-all group"
+                        >
+                          <div className="bg-pink-100 p-3 rounded-lg group-hover:bg-pink-200 transition-all">
+                            <Package className="w-6 h-6 text-pink-600" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900">BallonMail</h4>
+                            <p className="text-xs text-gray-500">Bulk email service</p>
+                          </div>
+                          <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600" />
+                        </a>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
