@@ -1300,7 +1300,7 @@ ${selectedEmail.html_body || selectedEmail.body}`}
                   </div>
                   <div className="flex-1 p-8 overflow-y-auto bg-gray-50">
                     {viewMode === 'html' && selectedEmail.html_body ? (
-                      <div className="max-w-4xl">
+                      <div className="w-full">
                         <div 
                           className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
                           style={{
@@ -1323,7 +1323,7 @@ ${selectedEmail.html_body || selectedEmail.body}`}
                         </div>
                       </div>
                     ) : (
-                      <div className="max-w-4xl">
+                      <div className="w-full">
                         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                           <p className="whitespace-pre-wrap text-gray-700 leading-relaxed text-base text-left" style={{ fontFamily: 'monospace' }}>
                             {selectedEmail.body}
