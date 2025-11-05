@@ -4,7 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 // API Configuration
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// In production, use same domain (Cloudflare Worker handles /api/send-bulk)
+// In development, use local backend
+const API_URL = import.meta.env.VITE_API_URL || (
+  import.meta.env.DEV ? 'http://localhost:5000' : ''
+);
 
 function BallonMail() {
   const navigate = useNavigate();

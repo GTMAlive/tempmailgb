@@ -1,0 +1,15 @@
+name = "ballonmail-api"
+main = "ballonmail-worker.js"
+compatibility_date = "2024-01-01"
+
+# Workers Routes
+routes = [
+  { pattern = "tempmailgb.com/api/send-bulk", zone_name = "tempmailgb.com" }
+]
+
+# Environment Variables (set via Cloudflare Dashboard or wrangler secret)
+# [vars]
+# FROM_EMAIL = "noreply@tempmailgb.com"
+
+# Secrets (set using: wrangler secret put RESEND_API_KEY)
+# RESEND_API_KEY = "your-resend-api-key"
