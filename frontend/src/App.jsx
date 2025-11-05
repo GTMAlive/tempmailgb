@@ -422,7 +422,7 @@ function App() {
                   </button>
                   <button
                     onClick={() => { setShowAuth(true); setAuthMode('signup'); }}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all text-sm"
+                    className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-lg transition-all text-sm shadow-lg shadow-purple-500/30"
                   >
                     Sign up
                   </button>
