@@ -1135,9 +1135,10 @@ ${selectedEmail.html_body || selectedEmail.body}`}
                 <div className="flex items-center justify-center">
                   <button
                     onClick={generateEmail}
-                    className="w-full flex items-center justify-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 py-3 px-4 rounded-xl font-medium transition-all text-sm"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center space-x-2 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 py-3 px-4 rounded-xl font-medium transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <RefreshCw className="w-4 h-4" />
+                    <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                     <span>Generate new email</span>
                   </button>
                 </div>
